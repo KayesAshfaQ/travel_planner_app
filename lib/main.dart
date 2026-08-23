@@ -4,19 +4,15 @@ import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/travel_planner_provider.dart';
 import 'ui/screens/login_screen.dart';
-// Note: You must run `flutterfire configure` to generate firebase_options.dart
-// import 'firebase_options.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   try {
-    // Attempt to initialize Firebase. 
-    // This will throw if firebase_options.dart is missing/not configured properly.
-    // await Firebase.initializeApp(
-    //   options: DefaultFirebaseOptions.currentPlatform,
-    // );
-    await Firebase.initializeApp(); 
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   } catch (e) {
     debugPrint('Firebase Initialization Error: $e');
   }

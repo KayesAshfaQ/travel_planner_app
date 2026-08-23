@@ -5,7 +5,7 @@ class GeminiAiService {
   final GenerativeModel _model;
 
   GeminiAiService()
-    : _model = FirebaseAI.googleAI().generativeModel(model: 'gemini-3.7-flash');
+    : _model = FirebaseAI.googleAI().generativeModel(model: 'gemini-3.1-flash-lite');
 
   Future<TripPlan?> generateTripPlan({
     required String destination,
