@@ -22,7 +22,20 @@ The trip is for $days days.
 Budget level: $budget.
 
 Provide a detailed, day-by-day plan including activities, suggested restaurants, and travel tips.
-Format the output nicely.
+Format the output as a JSON object with the following structure:
+{
+  "dailyItinerary": [
+    {
+      "dayNumber": 1,
+      "title": "Day 1",
+      "morningActivity": "Morning activity",
+      "afternoonActivity": "Afternoon activity",
+      "eveningActivity": "Evening activity",
+      "diningSuggestions": "Dining suggestions",
+      "tips": "Tips"
+    }
+  ]
+}
 ''';
 
     try {
