@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:travel_planner_app/models/daily_itenary.dart';
 import '../../models/trip_plan.dart';
+import '../widgets/structured_itinerary.dart';
 
 class TripDetailsScreen extends StatelessWidget {
   final TripPlan trip;
@@ -80,9 +80,11 @@ class TripDetailsScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Wrap(
+                              spacing: 4,
                               children: trip.interests
                                   .map(
                                     (interest) => Chip(
+                                      padding: EdgeInsets.zero,
                                       label: Text(interest),
                                       materialTapTargetSize:
                                           MaterialTapTargetSize.shrinkWrap,
@@ -99,118 +101,15 @@ class TripDetailsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'AI Generated Itinerary',
+              'Your Itinerary',
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 4),
             StructuredItinerary(itinerary: trip.itinerary),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class StructuredItinerary extends StatelessWidget {
-  final List<DailyItenary> itinerary;
-
-  const StructuredItinerary({super.key, required this.itinerary});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: itinerary.length,
-      itemBuilder: (context, index) {
-        final dailyItenary = itinerary[index];
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Card(
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Day ${dailyItenary.dayNumber}',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildSection(
-                    context,
-                    icon: Icons.sunny,
-                    title: 'Morning',
-                    content: dailyItenary.morningActivity,
-                  ),
-                  _buildSection(
-                    context,
-                    icon: Icons.wb_sunny,
-                    title: 'Afternoon',
-                    content: dailyItenary.afternoonActivity,
-                  ),
-                  _buildSection(
-                    context,
-                    icon: Icons.sunny,
-                    title: 'Evening',
-                    content: dailyItenary.eveningActivity,
-                  ),
-                  if (dailyItenary.diningSuggestions.isNotEmpty)
-                    _buildSection(
-                      context,
-                      icon: Icons.food_bank,
-                      title: 'Dining Suggestions',
-                      content: dailyItenary.diningSuggestions,
-                    ),
-                  if (dailyItenary.tips.isNotEmpty)
-                    _buildSection(
-                      context,
-                      icon: Icons.light,
-                      title: 'Tips',
-                      content: dailyItenary.tips,
-                    ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildSection(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required String content,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18),
-              const SizedBox(width: 4),
-              Text(
-                title,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(content, style: Theme.of(context).textTheme.bodyMedium),
-        ],
       ),
     );
   }
