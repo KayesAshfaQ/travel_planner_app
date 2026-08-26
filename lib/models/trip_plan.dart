@@ -20,7 +20,7 @@ class TripPlan {
   });
 
   factory TripPlan.fromMap(Map<String, dynamic> data, String documentId) {
-    List<DailyItenary> parsedItinerary = (data['itinerary'] as List<dynamic>)
+    List<DailyItenary> parsedItinerary = (data['itinerary'] as List<dynamic>? ?? [])
         .map((item) => DailyItenary.fromMap(item as Map<String, dynamic>))
         .toList();
 
@@ -35,7 +35,7 @@ class TripPlan {
           : DateTime.now(),
       itinerary: parsedItinerary,
       budget: data['budget'] ?? '',
-      interests: data['interests'] ?? [],
+      interests: List<String>.from(data['interests'] ?? []),
     );
   }
 
