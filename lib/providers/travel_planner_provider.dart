@@ -6,7 +6,7 @@ import '../services/gemini_ai_service.dart';
 class TravelPlannerProvider extends ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();
   final GeminiAiService _aiService = GeminiAiService();
-  
+
   bool _isGenerating = false;
   bool get isGenerating => _isGenerating;
 
@@ -26,6 +26,7 @@ class TravelPlannerProvider extends ChangeNotifier {
       startDate: startDate,
       endDate: endDate,
       budget: budget,
+      interests: interests,
     );
 
     if (plan != null) {

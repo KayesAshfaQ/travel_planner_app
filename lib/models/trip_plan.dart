@@ -1,10 +1,13 @@
+import 'package:travel_planner_app/models/daily_itenary.dart';
+
 class TripPlan {
   final String id;
   final String destination;
   final DateTime startDate;
   final DateTime endDate;
-  final String itinerary;
+  final List<DailyItenary> itinerary;
   final String budget;
+  final List<String> interests;
 
   TripPlan({
     required this.id,
@@ -13,9 +16,14 @@ class TripPlan {
     required this.endDate,
     required this.itinerary,
     required this.budget,
+    required this.interests,
   });
 
   factory TripPlan.fromMap(Map<String, dynamic> data, String documentId) {
+    List<DailyItenary> parsedItinerary = (data['itinerary'] as List<dynamic>)
+        .map((item) => DailyItenary.fromMap(item as Map<String, dynamic>))
+        .toList();
+
     return TripPlan(
       id: documentId,
       destination: data['destination'] ?? '',
@@ -25,8 +33,9 @@ class TripPlan {
       endDate: data['endDate'] != null
           ? DateTime.fromMillisecondsSinceEpoch(data['endDate'])
           : DateTime.now(),
-      itinerary: data['itinerary'] ?? '',
+      itinerary: parsedItinerary,
       budget: data['budget'] ?? '',
+      interests: data['interests'] ?? [],
     );
   }
 
@@ -35,8 +44,9 @@ class TripPlan {
       'destination': destination,
       'startDate': startDate.millisecondsSinceEpoch,
       'endDate': endDate.millisecondsSinceEpoch,
-      'itinerary': itinerary,
+      'itinerary': itinerary.map((e) => e.toMap()).toList(),
       'budget': budget,
+      'interests': interests,
     };
   }
 }
