@@ -17,8 +17,23 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
   DateTime? _startDate;
   DateTime? _endDate;
   String _selectedBudget = 'Moderate';
+  List<String> _selectedInterests = [];
 
   final _budgetOptions = ['Budget', 'Moderate', 'Luxury'];
+  final _availableInterests = [
+    'Food',
+    'Culture',
+    'History',
+    'Nature',
+    'Adventure',
+    'Relaxation',
+    'Shopping',
+    'Hiking',
+    'Beaches',
+    'Nightlife',
+    'Family-friendly',
+    'Sightseeing',
+  ];
 
   Future<void> _selectDateRange(BuildContext context) async {
     final DateTimeRange? picked = await showDateRangePicker(
@@ -34,25 +49,38 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
     }
   }
 
+  void _toggleInterest(String interest) {
+    setState(() {
+      if (_selectedInterests.contains(interest)) {
+        _selectedInterests.remove(interest);
+      } else {
+        _selectedInterests.add(interest);
+      }
+    });
+  }
+
   void _generateTrip() async {
-    if (_destinationController.text.isEmpty || _startDate == null || _endDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields')),
-      );
+    if (_destinationController.text.isEmpty ||
+        _startDate == null ||
+        _endDate == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
       return;
     }
 
-    final user = Provider.of<AuthProvider>(context, listen: false).user;
+    final user = context.read<AuthProvider>().user;
     if (user == null) return;
 
-    final plannerProvider = Provider.of<TravelPlannerProvider>(context, listen: false);
-    
+    final plannerProvider = context.read<TravelPlannerProvider>();
+
     final plan = await plannerProvider.generateAndSaveTrip(
       user.uid,
       destination: _destinationController.text,
       startDate: _startDate!,
       endDate: _endDate!,
       budget: _selectedBudget,
+      interests: _selectedInterests,
     );
 
     if (mounted) {
@@ -70,14 +98,20 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
   }
 
   @override
+  void dispose() {
+    _destinationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isGenerating = Provider.of<TravelPlannerProvider>(context).isGenerating;
+    final isGenerating = Provider.of<TravelPlannerProvider>(
+      context,
+    ).isGenerating;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Plan a Trip'),
-      ),
+      appBar: AppBar(title: const Text('Plan a Trip')),
       body: isGenerating
           ? Center(
               child: Column(
@@ -85,7 +119,10 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                 children: [
                   const CircularProgressIndicator(),
                   const SizedBox(height: 16),
-                  Text('AI is crafting your perfect itinerary...', style: theme.textTheme.titleMedium),
+                  Text(
+                    'AI is crafting your perfect itinerary...',
+                    style: theme.textTheme.titleMedium,
+                  ),
                 ],
               ),
             )
@@ -94,7 +131,10 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Where do you want to go?', style: theme.textTheme.titleMedium),
+                  Text(
+                    'Where do you want to go?',
+                    style: theme.textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _destinationController,
@@ -105,8 +145,11 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
-                  Text('When are you travelling?', style: theme.textTheme.titleMedium),
+
+                  Text(
+                    'When are you travelling?',
+                    style: theme.textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 8),
                   ListTile(
                     shape: RoundedRectangleBorder(
@@ -123,7 +166,10 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  Text('What is your budget?', style: theme.textTheme.titleMedium),
+                  Text(
+                    'What is your budget?',
+                    style: theme.textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     initialValue: _selectedBudget,
@@ -141,6 +187,27 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                       if (val != null) setState(() => _selectedBudget = val);
                     },
                   ),
+
+                  const SizedBox(height: 24),
+
+                  Text(
+                    'What are your interests?',
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: _availableInterests.map((interest) {
+                      final isSelected = _selectedInterests.contains(interest);
+                      return FilterChip(
+                        label: Text(interest),
+                        selected: isSelected,
+                        onSelected: (_) => _toggleInterest(interest),
+                      );
+                    }).toList(),
+                  ),
+
                   const SizedBox(height: 32),
 
                   SizedBox(

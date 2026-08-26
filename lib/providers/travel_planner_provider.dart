@@ -16,6 +16,7 @@ class TravelPlannerProvider extends ChangeNotifier {
     required DateTime startDate,
     required DateTime endDate,
     required String budget,
+    required List<String> interests,
   }) async {
     _isGenerating = true;
     notifyListeners();
