@@ -12,7 +12,7 @@ class GeminiAiService {
 
   GeminiAiService()
     : _model = FirebaseAI.googleAI().generativeModel(
-        model: 'gemini-3.1-flash-lite',
+        model: 'gemini-3.6-flash',
       ),
       _placesService = PlacesService();
 
