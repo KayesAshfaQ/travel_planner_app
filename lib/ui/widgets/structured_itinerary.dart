@@ -39,14 +39,14 @@ class StructuredItinerary extends StatelessWidget {
                 if (dailyItenary.afternoonActivity.isNotEmpty)
                   _buildSection(
                     context,
-                    icon: Icons.wb_sunny,
+                    icon: Icons.wb_twighlight,
                     title: 'Afternoon',
                     content: dailyItenary.afternoonActivity,
                   ),
                 if (dailyItenary.eveningActivity.isNotEmpty)
                   _buildSection(
                     context,
-                    icon: Icons.sunny,
+                    icon: Icons.nightlife,
                     title: 'Evening',
                     content: dailyItenary.eveningActivity,
                   ),
@@ -60,7 +60,7 @@ class StructuredItinerary extends StatelessWidget {
                 if (dailyItenary.tips.isNotEmpty)
                   _buildSection(
                     context,
-                    icon: Icons.light,
+                    icon: Icons.lightbulb_sharp,
                     title: 'Tips',
                     content: dailyItenary.tips,
                   ),
