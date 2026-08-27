@@ -3,15 +3,18 @@ import 'dart:convert';
 import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter/foundation.dart';
 import 'package:travel_planner_app/models/daily_itenary.dart';
+import 'package:travel_planner_app/services/places_service.dart';
 import '../models/trip_plan.dart';
 
 class GeminiAiService {
   final GenerativeModel _model;
+  final PlacesService _placesService;
 
   GeminiAiService()
     : _model = FirebaseAI.googleAI().generativeModel(
         model: 'gemini-3.1-flash-lite',
-      );
+      ),
+      _placesService = PlacesService();
 
   Future<TripPlan?> generateTripPlan({
     required String destination,
@@ -22,6 +25,11 @@ class GeminiAiService {
   }) async {
     final days = endDate.difference(startDate).inDays;
 
+    final placesContext = await _placesService.fetchPlacesContext(
+      destination,
+      interests,
+    );
+
     final prompt =
         '''
 You are an expert travel planner. Create a day-by-day itinerary for a trip to $destination.
@@ -29,7 +37,10 @@ The trip is for $days days.
 Budget level: $budget.
 Interests/Preferences: ${interests.join(', ')}.
 
-Provide a detailed, day-by-day plan. You must return ONLY a JSON array of objects, where each object represents a day and matches the following schema:
+Here are some real places you MUST use to build the itinerary (hotels, restaurants, attractions):
+$placesContext
+
+Provide a detailed, day-by-day plan incorporating these places. You must return ONLY a JSON array of objects, where each object represents a day and matches the following schema:
 [
   {
     "dayNumber": 1,
@@ -46,17 +57,6 @@ Provide a detailed, day-by-day plan. You must return ONLY a JSON array of object
     try {
       final response = await _model.generateContent([Content.text(prompt)]);
       if (response.text != null) {
-        /*  debugPrint('Generated trip plan: ${response.text}');
-
-        return TripPlan(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          destination: destination,
-          startDate: startDate,
-          endDate: endDate,
-          itinerary: response.text!,
-          budget: budget,
-        ); */
-
         final rawText = response.text!.trim();
 
         String jsonString = rawText;
